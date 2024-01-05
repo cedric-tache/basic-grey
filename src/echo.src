@@ -12,7 +12,7 @@ list.join = function(delimiter)
 
 	result = self[0]
 	for item in self[1:]
-		result = result + delimiter + item
+		result = result + delmiter + item
 	end for
 	return result
 end function
