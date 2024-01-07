@@ -1,0 +1,37 @@
+#include lib/extendCommonTypes.src
+#include lib/functional.src
+#include lib/path.src
+
+if params.len != 1 or params[0] == "-h" or params[0] == "--help" then
+	exit("<b>Usage: tree [path to folder]</b>")
+end if
+
+
+print_folder = function(folder, current_indentation)
+	indentation = ""
+	for i in range(1, current_indentation - 1, 1)
+		indentation = indentation + " |"
+	end for
+
+	subFolders = folder.get_folders
+	subFiles = folder.get_files
+	for i in range(0, subFolders.len - 1, 1) // range(0, -1) would return [0, -1]
+		subFolder = subFolders[i]
+		print(indentation + " +" + subFolder.name)
+
+		print_folder(subFolder, current_indentation + 1)
+	end for
+
+	for i in range(0, subFiles.len - 1, 1) // range(0, -1) would return [0, -1]
+		subFile = subFiles[i]
+	end for
+end function
+
+folderPath = Path.of([current_path, params[0]]).toAbsolutePath().normalize()
+folder = get_shell.host_computer.File(folderPath._path)
+
+if typeof(folder) != "file" then exit("Folder not found: " + folderPath._path)
+if not folder.is_folder then exit("Expected folder but found file: " + params[0])
+
+print(folderPath._path)
+print_folder(folder, 1)

@@ -1,0 +1,21 @@
+#include lib/const.src
+#include lib/extendCommonTypes.src
+
+printUsage = function()
+	print("<b>Usage grep [pattern] [path to file]</b>")
+end function
+
+if params.len != 2 or params[0] == "-h" or params[0] == "--help" then exit(printUsage())
+
+pattern = params[0]
+pathToFile = params[1]
+
+computer = get_shell.host_computer()
+file = computer.File(pathToFile)
+if not file then exit("grep: can't find " + origFile)
+
+content = file.get_content()
+
+for line in content.split(Const.LINE_FEED)
+	if (line.contains(pattern)) then print(line)
+end for

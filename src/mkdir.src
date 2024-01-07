@@ -1,0 +1,29 @@
+#include lib/extendCommonTypes.src
+#include lib/stream.src
+#include lib/path.src
+
+createFolderRecursively = function(path)
+	parentPath = path.getParent()
+	parentFolder = get_shell.host_computer.File(parentPath.toString())
+
+	if parentFolder == null then
+		createFolderRecursively(parentPath)
+	else if not parentFolder.is_folder() then
+		exit("Can't create parent folder, because a file with the same name already exists: " + parentFolder.toString())
+	end if
+
+	result = get_shell.host_computer.create_folder(parentPath.toString(), path.getFileName())
+	if result isa string then exit("Can't create folder: " + parentPath.toString() + " Error: " + result)
+	if not result then exit("")
+end function
+
+if params.len != 1 or params[0] == "-h" or params[0] == "--help" then
+	exit("<b>Usage: mkdir [path to folder]</b>")
+end if
+
+folderPath = Path.of([current_path, params[0]]).toAbsolutePath().normalize()
+file = get_shell.host_computer.File(folderPath.toString())
+
+if file != null then exit("A folder/file already exists with this name")
+
+createFolderRecursively(folderPath)
