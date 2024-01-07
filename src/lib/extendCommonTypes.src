@@ -1,0 +1,66 @@
+string.contains = function(substring)
+	return self.indexOf(substring) != null
+end function
+
+string.startsWith = function(prefix)
+	if self.len < prefix.len then return false
+	
+	for i in range(0, prefix.len - 1)
+		if self[i] != prefix[i] then return false
+	end for
+	
+	return true
+end function
+
+list.isEmpty = function()
+	return self.len == 0
+end function
+
+list.toMap = function(toKey, toValue)
+	map = {}
+	for value in self.values()
+		map[toKey(value)] = toValue(value)
+	end for
+	return map
+end function
+
+list.map = function(transformFunction)
+	array = []
+	for value in self.values()
+		array.push(transformFunction(value))
+	end for
+	return array
+end function
+
+list.filter = function(filterFunction)
+	filteredItems = []
+	for item in self.values()
+		if (filterFunction(item)) then
+			filteredItems.push(item)
+		end if
+	end for
+	return filteredItems
+end function
+
+list.join = function(delimiter)
+	if not delimiter isa string then exit("list.join was expecting a string, but received a " + typeof(delimiter))
+	if self.isEmpty() then return ""
+	
+	for item in self.values
+		if not item isa string then exit("list.join expected a list of string but found " + typeof(item))
+	end for
+
+	result = self[0]
+	for item in self[1:]
+		result = result + delimiter + item
+	end for
+	return result
+end function
+
+list.reverse = function()
+	items = []
+	for i in range(0, self.values().len - 1)
+		items.push(self[i])
+	end for
+	return items
+end function

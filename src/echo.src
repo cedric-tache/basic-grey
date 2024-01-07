@@ -1,0 +1,20 @@
+list.isEmpty = function()
+	return self.len == 0
+end function
+
+list.join = function(delimiter)
+	if not delimiter isa string then exit("list.join was expecting a string, but received a " + typeof(delimiter))
+	if self.isEmpty() then return ""
+
+	for item in self.values
+		if not item isa string then exit("list.join expected a list of string but found " + typeof(item))
+    end for
+
+	result = self[0]
+	for item in self[1:]
+		result = result + delimiter + item
+	end for
+	return result
+end function
+
+print(params.join(" "))
