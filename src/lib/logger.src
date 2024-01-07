@@ -1,0 +1,47 @@
+LogLevel = {}
+LogLevel.levels = {}
+LogLevel.add = function(level, color = null)
+	logLevel = new LogLevel
+	logLevel.level = level
+	logLevel.color = color
+	LogLevel.levels[level] = logLevel
+
+	return logLevel
+end function
+
+LogLevel.add("DEBUG", "#1E90FF")
+LogLevel.add("INFO", "white")
+LogLevel.add("WARN", "yellow")
+LogLevel.add("ERROR", "orange")
+LogLevel.add("OUT")
+
+Logger = {}
+Logger._log = function(message)
+	logMessage = self.level + " " + message
+
+	if self.color == null then
+		print(logMessage)
+	else
+		print("<color=" + self.color + ">" + logMessage + "</color")
+	end if
+end function
+
+Logger._createLogFunction = function(logLevel)
+	test = function(message)
+		logMessage = logLevel.level + " " + message
+
+		if logLevel.color == null then
+			print(logMessage)
+		else
+			print("<color=" + logLevel.color + ">" + logMessage + "</color>")
+		end if
+	end function
+
+	return @test
+end function
+
+Logger.debug = Logger._createLogFunction(LogLevel.levels["DEBUG"])
+Logger.info = Logger._createLogFunction(LogLevel.levels["INFO"])
+Logger.warn = Logger._createLogFunction(LogLevel.levels["WARN"])
+Logger.error = Logger._createLogFunction(LogLevel.levels["ERROR"])
+Logger.out = Logger._createLogFunction(LogLevel.levels["OUT"])

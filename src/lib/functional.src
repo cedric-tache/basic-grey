@@ -1,0 +1,27 @@
+Mapping = {}
+Mapping.byField = function(field)
+	map = function(x)
+		return x[field]
+	end function
+	return @map
+end function
+
+Filtering = {}
+Filtering.equals = function(value)
+	filter = function(x)
+		return x == value
+	end function
+	return @filter
+end function
+Filtering.byField = function(field, value)
+	filter = function(x)
+		return x[field] == value
+	end function
+	return @filter
+end function
+Filtering.reverse = function(filteringFunction)
+	filter = function(x)
+		return not filteringFunction(x)
+	end function
+	return @filter
+end function

@@ -1,0 +1,80 @@
+#include extendCommonTypes.src
+#include functional.src
+
+Path = {}
+Path._cleanPath = function(path)
+	skipCurrentFolder = Filtering.reverse(Filtering.equals("."))
+	notEmpty = Filtering.reverse(Filtering.equals(""))
+	parts = path.split("/").filter(@notEmpty).filter(@skipCurrentFolder)
+	cleanedPath = ""
+	if path.startsWith("/") then cleanedPath = "/"
+
+	return cleanedPath + parts.join("/")
+end function
+
+Path.of = function(first, second = null)
+	if second != null then exit("Path.of expects a string or a list, but not multiple arguments")
+
+	if first isa list then
+		paths = first
+
+		for i in range(paths.len - 1, 0, -1)
+			path = paths[i]
+			if path.startsWith("/") then
+				paths = paths[i:]
+				break
+			end if
+		end for
+
+		first = paths.join("/")
+	end if
+
+	path = new Path
+	path._path = path._cleanPath(first)
+	if path._path.startsWith("/") then path.isAbsolute = true
+
+	return path
+end function
+
+Path.normalize = function()
+	parts = self._cleanPath(self._path).split("/")
+	cleanedParts = []
+	for i in range(0, parts.len - 1)
+		item = parts[i]
+
+		if item == ".." and not cleanedParts.isEmpty() then
+			cleanedParts.pop()
+		else
+			cleanedParts.push(item)
+		end if
+	end for
+
+	if self.isAbsolute then return Path.of("/" + cleanedParts.join("/"))
+	return Path.of(cleanedParts.join("/"))
+end function
+
+Path.toAbsolutePath = function()
+	if self.isAbsolute then return self
+
+	return Path.of(["/", self._path])
+end function
+
+Path.getParent = function()
+	pathFirstFolder = self._path.indexOf("/")
+	parentLastCharacter = self._path.lastIndexOf("/")
+
+	if pathFirstFolder >= parentLastCharacter then
+		return Path.of([self._path, ".."])
+	end if
+
+	return Path.of(self._path[:parentLastCharacter])
+end function
+
+Path.toString = function()
+	return self._path
+end function
+
+Path.getFileName = function()
+	fileNameFirstChar = self._path.lastIndexOf("/") + 1
+	return self._path[fileNameFirstChar:]
+end function
